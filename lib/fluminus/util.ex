@@ -13,9 +13,10 @@ defmodule Fluminus.Util do
   """
   @spec sanitise_filename(String.t(), String.t()) :: String.t()
   def sanitise_filename(name, replacement \\ "-") when is_binary(name) and is_binary(replacement) do
-    # According to http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html:
-    # The bytes composing the name shall not contain the <NUL> or <slash> characters
-    String.replace(name, ~r|[/\0]|, replacement)
+  String.strip(name)
+    |> String.normalize(:nfd)
+    |> String.replace(~r/[^.0-9A-z\s]/u, "")
+    |> String.replace(~r/[[:space:]]+/u, "-")
   end
 
   @doc """
